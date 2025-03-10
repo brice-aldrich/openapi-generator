@@ -4,43 +4,89 @@
 import { Inject, Injectable, Optional }                      from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams,
          HttpResponse, HttpEvent, HttpParameterCodec{{#httpContextInOptions}}, HttpContext {{/httpContextInOptions}}
-        }       from '@angular/common/http';
+        }                                                    from '@angular/common/http';
 import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 {{#imports}}
 // @ts-ignore
-import { {{ classname }} } from '{{ filename }}';
+import { {{classname}} } from '{{filename}}';
 {{/imports}}
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
-import { {{configurationClassName}} }                                     from '../configuration';
+import { {{configurationClassName}} }                                 from '../configuration';
 import { BaseService } from '../api.base.service';
-{{#withInterfaces}}
-import {
-    {{classname}}Interface{{#useSingleRequestParameter}}{{#operations}}{{#operation}}{{#allParams.0}},
-    {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}RequestParams{{/allParams.0}}{{/operation}}{{/operations}}{{/useSingleRequestParameter}}
-} from './{{classFilename}}Interface';
-{{/withInterfaces}}
 
 {{#operations}}
 
-{{^withInterfaces}}
-{{#useSingleRequestParameter}}
 {{#operation}}
 {{#allParams.0}}
+/**
+ * Parameters for {{nickname}} operation
+ */
 export interface {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}RequestParams {
-{{#allParams}}
-    {{#description}}/** {{.}} */
-    {{/description}}{{paramName}}{{^required}}?{{/required}}: {{{dataType}}}{{#isNullable}} | null{{/isNullable}};
-{{/allParams}}
+{{#queryParams.0}}
+  /**
+   * Query parameters
+   */
+  queryParams: {
+    {{#queryParams}}
+    /**
+     * {{description}}
+     */
+    {{paramName}}{{^required}}?{{/required}}: {{{dataType}}}{{#isNullable}} | null{{/isNullable}};
+    {{/queryParams}}
+  };
+{{/queryParams.0}}
+{{#pathParams.0}}
+  /**
+   * Path parameters
+   */
+  pathParams: {
+    {{#pathParams}}
+    /**
+     * {{description}}
+     */
+    {{paramName}}{{^required}}?{{/required}}: {{{dataType}}}{{#isNullable}} | null{{/isNullable}};
+    {{/pathParams}}
+  };
+{{/pathParams.0}}
+{{#headerParams.0}}
+  /**
+   * Header parameters
+   */
+  headerParams: {
+    {{#headerParams}}
+    /**
+     * {{description}}
+     */
+    {{paramName}}{{^required}}?{{/required}}: {{{dataType}}}{{#isNullable}} | null{{/isNullable}};
+    {{/headerParams}}
+  };
+{{/headerParams.0}}
+{{#bodyParam}}
+  /**
+   * {{description}}
+   */
+  body{{^required}}?{{/required}}: {{{dataType}}}{{#isNullable}} | null{{/isNullable}};
+{{/bodyParam}}
+{{#formParams.0}}
+  /**
+   * Form parameters
+   */
+  formParams: {
+    {{#formParams}}
+    /**
+     * {{description}}
+     */
+    {{paramName}}{{^required}}?{{/required}}: {{{dataType}}}{{#isNullable}} | null{{/isNullable}};
+    {{/formParams}}
+  };
+{{/formParams.0}}
 }
-
 {{/allParams.0}}
 {{/operation}}
-{{/useSingleRequestParameter}}
-{{/withInterfaces}}
 
 {{#description}}
 /**
@@ -69,52 +115,93 @@ export class {{classname}} extends BaseService {
 {{#operation}}
     /**
 {{#summary}}
-     * {{.}}
+     * {{&.}}
 {{/summary}}
 {{#notes}}
-     * {{.}}
+     * {{&.}}
 {{/notes}}
-     {{^useSingleRequestParameter}}
-     {{#allParams}}
-     * @param {{paramName}} {{description}}
-     {{/allParams}}
-     {{/useSingleRequestParameter}}
-     {{#useSingleRequestParameter}}
      {{#allParams.0}}
      * @param requestParameters
      {{/allParams.0}}
-     {{/useSingleRequestParameter}}
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      {{#isDeprecated}}
      * @deprecated
      {{/isDeprecated}}
      */
-    public {{nickname}}({{^useSingleRequestParameter}}{{#allParams}}{{paramName}}{{^required}}?{{/required}}: {{{dataType}}}, {{/allParams}}{{/useSingleRequestParameter}}{{#useSingleRequestParameter}}{{#allParams.0}}requestParameters{{^hasRequiredParams}}?{{/hasRequiredParams}}: {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}RequestParams, {{/allParams.0}}{{/useSingleRequestParameter}}observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: {{#produces}}'{{{mediaType}}}'{{^-last}} | {{/-last}}{{/produces}}{{^produces}}undefined{{/produces}},{{#httpContextInOptions}} context?: HttpContext{{/httpContextInOptions}}{{#httpTransferCacheInOptions}}, transferCache?: boolean{{/httpTransferCacheInOptions}}}): Observable<{{#returnType}}{{{returnType}}}{{#isResponseTypeFile}}|undefined{{/isResponseTypeFile}}{{/returnType}}{{^returnType}}any{{/returnType}}>;
-    public {{nickname}}({{^useSingleRequestParameter}}{{#allParams}}{{paramName}}{{^required}}?{{/required}}: {{{dataType}}}, {{/allParams}}{{/useSingleRequestParameter}}{{#useSingleRequestParameter}}{{#allParams.0}}requestParameters{{^hasRequiredParams}}?{{/hasRequiredParams}}: {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}RequestParams, {{/allParams.0}}{{/useSingleRequestParameter}}observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: {{#produces}}'{{{mediaType}}}'{{^-last}} | {{/-last}}{{/produces}}{{^produces}}undefined{{/produces}},{{#httpContextInOptions}} context?: HttpContext{{/httpContextInOptions}}{{#httpTransferCacheInOptions}}, transferCache?: boolean{{/httpTransferCacheInOptions}}}): Observable<HttpResponse<{{#returnType}}{{{returnType}}}{{#isResponseTypeFile}}|undefined{{/isResponseTypeFile}}{{/returnType}}{{^returnType}}any{{/returnType}}>>;
-    public {{nickname}}({{^useSingleRequestParameter}}{{#allParams}}{{paramName}}{{^required}}?{{/required}}: {{{dataType}}}, {{/allParams}}{{/useSingleRequestParameter}}{{#useSingleRequestParameter}}{{#allParams.0}}requestParameters{{^hasRequiredParams}}?{{/hasRequiredParams}}: {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}RequestParams, {{/allParams.0}}{{/useSingleRequestParameter}}observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: {{#produces}}'{{{mediaType}}}'{{^-last}} | {{/-last}}{{/produces}}{{^produces}}undefined{{/produces}},{{#httpContextInOptions}} context?: HttpContext{{/httpContextInOptions}}{{#httpTransferCacheInOptions}}, transferCache?: boolean{{/httpTransferCacheInOptions}}}): Observable<HttpEvent<{{#returnType}}{{{returnType}}}{{#isResponseTypeFile}}|undefined{{/isResponseTypeFile}}{{/returnType}}{{^returnType}}any{{/returnType}}>>;
-    public {{nickname}}({{^useSingleRequestParameter}}{{#allParams}}{{paramName}}{{^required}}?{{/required}}: {{{dataType}}}, {{/allParams}}{{/useSingleRequestParameter}}{{#useSingleRequestParameter}}{{#allParams.0}}requestParameters{{^hasRequiredParams}}?{{/hasRequiredParams}}: {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}RequestParams, {{/allParams.0}}{{/useSingleRequestParameter}}observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: {{#produces}}'{{{mediaType}}}'{{^-last}} | {{/-last}}{{/produces}}{{^produces}}undefined{{/produces}},{{#httpContextInOptions}} context?: HttpContext{{/httpContextInOptions}}{{#httpTransferCacheInOptions}}, transferCache?: boolean{{/httpTransferCacheInOptions}}}): Observable<any> {
-{{#allParams}}
-{{#useSingleRequestParameter}}
-        const {{paramName}} = requestParameters{{^hasRequiredVars}}?{{/hasRequiredVars}}.{{paramName}};
-{{/useSingleRequestParameter}}
-{{#required}}
+    public {{nickname}}({{#allParams.0}}requestParameters{{^hasRequiredParams}}?{{/hasRequiredParams}}: {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}RequestParams, {{/allParams.0}}observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: {{#produces}}'{{mediaType}}'{{^-last}} | {{/-last}}{{/produces}}{{^produces}}undefined{{/produces}}{{#httpContextInOptions}}, context?: HttpContext{{/httpContextInOptions}}{{#httpTransferCacheInOptions}}, transferCache?: boolean{{/httpTransferCacheInOptions}}}): Observable<{{#returnType}}{{{returnType}}}{{#isResponseTypeFile}}|undefined{{/isResponseTypeFile}}{{/returnType}}{{^returnType}}any{{/returnType}}>;
+    public {{nickname}}({{#allParams.0}}requestParameters{{^hasRequiredParams}}?{{/hasRequiredParams}}: {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}RequestParams, {{/allParams.0}}observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: {{#produces}}'{{mediaType}}'{{^-last}} | {{/-last}}{{/produces}}{{^produces}}undefined{{/produces}}{{#httpContextInOptions}}, context?: HttpContext{{/httpContextInOptions}}{{#httpTransferCacheInOptions}}, transferCache?: boolean{{/httpTransferCacheInOptions}}}): Observable<HttpResponse<{{#returnType}}{{{returnType}}}{{#isResponseTypeFile}}|undefined{{/isResponseTypeFile}}{{/returnType}}{{^returnType}}any{{/returnType}}>>;
+    public {{nickname}}({{#allParams.0}}requestParameters{{^hasRequiredParams}}?{{/hasRequiredParams}}: {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}RequestParams, {{/allParams.0}}observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: {{#produces}}'{{mediaType}}'{{^-last}} | {{/-last}}{{/produces}}{{^produces}}undefined{{/produces}}{{#httpContextInOptions}}, context?: HttpContext{{/httpContextInOptions}}{{#httpTransferCacheInOptions}}, transferCache?: boolean{{/httpTransferCacheInOptions}}}): Observable<HttpEvent<{{#returnType}}{{{returnType}}}{{#isResponseTypeFile}}|undefined{{/isResponseTypeFile}}{{/returnType}}{{^returnType}}any{{/returnType}}>>;
+    public {{nickname}}({{#allParams.0}}requestParameters{{^hasRequiredParams}}?{{/hasRequiredParams}}: {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}RequestParams, {{/allParams.0}}observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: {{#produces}}'{{mediaType}}'{{^-last}} | {{/-last}}{{/produces}}{{^produces}}undefined{{/produces}}{{#httpContextInOptions}}, context?: HttpContext{{/httpContextInOptions}}{{#httpTransferCacheInOptions}}, transferCache?: boolean{{/httpTransferCacheInOptions}}}): Observable<any> {
+{{#allParams.0}}
+{{#queryParams.0}}
+        // Extract query parameters
+        const queryParams = requestParameters?.queryParams || {};
+        {{#queryParams}}
+        const {{paramName}} = queryParams.{{paramName}};
+        {{#required}}
         if ({{paramName}} === null || {{paramName}} === undefined) {
             throw new Error('Required parameter {{paramName}} was null or undefined when calling {{nickname}}.');
         }
-{{/required}}
-{{/allParams}}
+        {{/required}}
+        {{/queryParams}}
+{{/queryParams.0}}
+
+{{#pathParams.0}}
+        // Extract path parameters
+        const pathParams = requestParameters?.pathParams || {};
+        {{#pathParams}}
+        const {{paramName}} = pathParams.{{paramName}};
+        {{#required}}
+        if ({{paramName}} === null || {{paramName}} === undefined) {
+            throw new Error('Required parameter {{paramName}} was null or undefined when calling {{nickname}}.');
+        }
+        {{/required}}
+        {{/pathParams}}
+{{/pathParams.0}}
+
+{{#headerParams.0}}
+        // Extract header parameters
+        const headerParams = requestParameters?.headerParams || {};
+        {{#headerParams}}
+        const {{paramName}} = headerParams.{{paramName}};
+        {{#required}}
+        if ({{paramName}} === null || {{paramName}} === undefined) {
+            throw new Error('Required parameter {{paramName}} was null or undefined when calling {{nickname}}.');
+        }
+        {{/required}}
+        {{/headerParams}}
+{{/headerParams.0}}
+
+{{#bodyParam}}
+        // Extract body parameter
+        const {{paramName}} = requestParameters?.body;
+        {{#required}}
+        if ({{paramName}} === null || {{paramName}} === undefined) {
+            throw new Error('Required parameter {{paramName}} was null or undefined when calling {{nickname}}.');
+        }
+        {{/required}}
+{{/bodyParam}}
+
+{{#formParams.0}}
+        // Extract form parameters
+        const formParams = requestParameters?.formParams || {};
+        {{#formParams}}
+        const {{paramName}} = formParams.{{paramName}};
+        {{#required}}
+        if ({{paramName}} === null || {{paramName}} === undefined) {
+            throw new Error('Required parameter {{paramName}} was null or undefined when calling {{nickname}}.');
+        }
+        {{/required}}
+        {{/formParams}}
+{{/formParams.0}}
+{{/allParams.0}}
 
 {{#hasQueryParamsOrAuth}}
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
 {{#queryParams}}
         {{#isArray}}
         if ({{paramName}}) {
-        {{#isQueryParamObjectFormatJson}}
-        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
-            <any>{{paramName}}, '{{baseName}}');
-        {{/isQueryParamObjectFormatJson}}
-        {{^isQueryParamObjectFormatJson}}
         {{#isCollectionFormatMulti}}
             {{paramName}}.forEach((element) => {
                 localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
@@ -125,12 +212,13 @@ export class {{classname}} extends BaseService {
             localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
                 [...{{paramName}}].join(COLLECTION_FORMATS['{{collectionFormat}}']), '{{baseName}}');
         {{/isCollectionFormatMulti}}
-        {{/isQueryParamObjectFormatJson}}
         }
         {{/isArray}}
         {{^isArray}}
-        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
-          <any>{{paramName}}, '{{baseName}}');
+        if ({{paramName}} !== undefined) {
+            localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+                <any>{{paramName}}, '{{baseName}}');
+        }
         {{/isArray}}
 {{/queryParams}}
 
@@ -190,13 +278,14 @@ export class {{classname}} extends BaseService {
 {{/httpTransferCacheInOptions}}
 
 {{#bodyParam}}
-{{- duplicated below, don't forget to change}}
+{{^hasFormParams}}
         // to determine the Content-Type header
         const consumes: string[] = [
             {{#consumes}}
             '{{{mediaType}}}'{{^-last}},{{/-last}}
             {{/consumes}}
         ];
+{{/hasFormParams}}
 {{/bodyParam}}
 {{#hasFormParams}}
 {{^bodyParam}}
@@ -246,7 +335,7 @@ export class {{classname}} extends BaseService {
             if (localVarUseForm) {
                 {{paramName}}.forEach((element) => {
                     localVarFormParams = localVarFormParams.append('{{baseName}}{{#useSquareBracketsInArrayNames}}[]{{/useSquareBracketsInArrayNames}}', <any>element) as any || localVarFormParams;
-            })
+                })
             } else {
                 localVarFormParams = localVarFormParams.append('{{baseName}}{{#useSquareBracketsInArrayNames}}[]{{/useSquareBracketsInArrayNames}}', [...{{paramName}}].join(COLLECTION_FORMATS['{{collectionFormat}}'])) as any || localVarFormParams;
             }
@@ -274,7 +363,8 @@ export class {{classname}} extends BaseService {
         }
 
     {{/isResponseFile}}
-        let localVarPath = `{{{path}}}`;
+        let localVarPath = `{{{path}}}`{{#pathParams}}
+            .replace(`${"{{baseName}}"}`, encodeURIComponent(String({{paramName}}))){{/pathParams}};
         return this.httpClient.request{{^isResponseFile}}<{{#returnType}}{{{returnType}}}{{#isResponseTypeFile}}|undefined{{/isResponseTypeFile}}{{/returnType}}{{^returnType}}any{{/returnType}}>{{/isResponseFile}}('{{httpMethod}}', `${this.configuration.basePath}${localVarPath}`,
             {
     {{#httpContextInOptions}}
@@ -308,5 +398,6 @@ export class {{classname}} extends BaseService {
         );
     }
 
-{{/operation}}}
+{{/operation}}
+}
 {{/operations}}

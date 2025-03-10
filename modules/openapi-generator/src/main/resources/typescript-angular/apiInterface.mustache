@@ -8,22 +8,62 @@ import { {{classname}} } from '../model/models';
 {{/imports}}
 
 
-import { {{configurationClassName}} }                                     from '../configuration';
+import { {{configurationClassName}} }                                 from '../configuration';
 
 {{#operations}}
 
-{{#useSingleRequestParameter}}
 {{#operation}}
 {{#allParams.0}}
 export interface {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}RequestParams {
-{{#allParams}}
+{{#queryParams.0}}
+  /**
+   * Query parameters
+   */
+  queryParams: {
+    {{#queryParams}}
     {{paramName}}{{^required}}?{{/required}}: {{{dataType}}}{{#isNullable}} | null{{/isNullable}};
-{{/allParams}}
+    {{/queryParams}}
+  };
+{{/queryParams.0}}
+{{#pathParams.0}}
+  /**
+   * Path parameters
+   */
+  pathParams: {
+    {{#pathParams}}
+    {{paramName}}{{^required}}?{{/required}}: {{{dataType}}}{{#isNullable}} | null{{/isNullable}};
+    {{/pathParams}}
+  };
+{{/pathParams.0}}
+{{#headerParams.0}}
+  /**
+   * Header parameters
+   */
+  headerParams: {
+    {{#headerParams}}
+    {{paramName}}{{^required}}?{{/required}}: {{{dataType}}}{{#isNullable}} | null{{/isNullable}};
+    {{/headerParams}}
+  };
+{{/headerParams.0}}
+{{#bodyParam}}
+  /**
+   * {{description}}
+   */
+  body{{^required}}?{{/required}}: {{{dataType}}}{{#isNullable}} | null{{/isNullable}};
+{{/bodyParam}}
+{{#formParams.0}}
+  /**
+   * Form parameters
+   */
+  formParams: {
+    {{#formParams}}
+    {{paramName}}{{^required}}?{{/required}}: {{{dataType}}}{{#isNullable}} | null{{/isNullable}};
+    {{/formParams}}
+  };
+{{/formParams.0}}
 }
-
 {{/allParams.0}}
 {{/operation}}
-{{/useSingleRequestParameter}}
 
 {{#description}}
     /**
@@ -38,13 +78,10 @@ export interface {{classname}}Interface {
     /**
      * {{summary}}
      * {{notes}}
-     {{^useSingleRequestParameter}}
-     {{#allParams}}* @param {{paramName}} {{description}}
-     {{/allParams}}{{/useSingleRequestParameter}}{{#useSingleRequestParameter}}{{#allParams.0}}* @param requestParameters
-     {{/allParams.0}}{{/useSingleRequestParameter}}{{#isDeprecated}}
-     * @deprecated
-     {{/isDeprecated}}*/
-    {{nickname}}({{^useSingleRequestParameter}}{{#allParams}}{{paramName}}{{^required}}?{{/required}}: {{{dataType}}}, {{/allParams}}{{/useSingleRequestParameter}}{{#useSingleRequestParameter}}{{#allParams.0}}requestParameters: {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}RequestParams, {{/allParams.0}}{{/useSingleRequestParameter}}extraHttpRequestParams?: any): Observable<{{{returnType}}}{{^returnType}}{}{{/returnType}}>;
+     {{#allParams.0}}* @param requestParameters
+     {{/allParams.0}}* @param extraHttpRequestParams Optional additional parameters to pass to the HTTP request
+     */
+    {{nickname}}({{#allParams.0}}requestParameters: {{#prefixParameterInterfaces}}{{classname}}{{/prefixParameterInterfaces}}{{operationIdCamelCase}}RequestParams, {{/allParams.0}}extraHttpRequestParams?: any): Observable<{{{returnType}}}{{^returnType}}{}{{/returnType}}>;
 
 {{/operation}}
 }
