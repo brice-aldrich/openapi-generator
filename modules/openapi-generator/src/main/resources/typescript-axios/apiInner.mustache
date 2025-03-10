@@ -304,11 +304,11 @@ export const {{classname}}Factory = function (configuration?: Configuration, bas
         {{#useSingleRequestParameter}}
         {{nickname}}({{#allParams.0}}requestParameters: {{classname}}{{operationIdCamelCase}}Request{{^hasRequiredParams}} = {}{{/hasRequiredParams}}, {{/allParams.0}}options?: RawAxiosRequestConfig): AxiosPromise<{{{returnType}}}{{^returnType}}void{{/returnType}}> {
             return localVarFp.{{nickname}}(
-                {{#queryParams}}requestParameters.queryParams?.{{paramName}} ?? undefined, {{/queryParams}}
-                {{#pathParams}}requestParameters.pathParams?.{{paramName}} ?? undefined, {{/pathParams}}
-                {{#headerParams}}requestParameters.headerParams?.{{paramName}} ?? undefined, {{/headerParams}}
-                {{#bodyParam}}requestParameters.body ?? undefined, {{/bodyParam}}
-                {{#formParams}}requestParameters.formParams?.{{paramName}} ?? undefined, {{/formParams}}
+                {{#pathParams}}requestParameters.pathParams.{{paramName}}, {{/pathParams}}
+                {{#headerParams}}requestParameters.headerParams.{{paramName}}, {{/headerParams}}
+                {{#queryParams}}requestParameters.queryParams.{{paramName}}, {{/queryParams}}
+                {{#bodyParam}}requestParameters.body, {{/bodyParam}}
+                {{#formParams}}requestParameters.formParams.{{paramName}}, {{/formParams}}
                 options).then((request) => request(axios, basePath));
         },
         {{/useSingleRequestParameter}}
@@ -376,7 +376,7 @@ export interface {{classname}}{{operationIdCamelCase}}Request {
      * @type {object}
      * @memberof {{classname}}{{operationIdCamelCase}}
      */
-    queryParams?: {
+    queryParams: {
         {{#queryParams}}
         /**
          * {{description}}
@@ -397,7 +397,7 @@ export interface {{classname}}{{operationIdCamelCase}}Request {
      * @type {object}
      * @memberof {{classname}}{{operationIdCamelCase}}
      */
-    pathParams?: {
+    pathParams: {
         {{#pathParams}}
         /**
          * {{description}}
@@ -418,7 +418,7 @@ export interface {{classname}}{{operationIdCamelCase}}Request {
      * @type {object}
      * @memberof {{classname}}{{operationIdCamelCase}}
      */
-    headerParams?: {
+    headerParams: {
         {{#headerParams}}
         /**
          * {{description}}
@@ -448,7 +448,7 @@ export interface {{classname}}{{operationIdCamelCase}}Request {
      * @type {object}
      * @memberof {{classname}}{{operationIdCamelCase}}
      */
-    formParams?: {
+    formParams: {
         {{#formParams}}
         /**
          * {{description}}
@@ -504,11 +504,12 @@ export class {{classname}} extends BaseAPI {
     {{#useSingleRequestParameter}}
     public {{nickname}}({{#allParams.0}}requestParameters: {{classname}}{{operationIdCamelCase}}Request{{^hasRequiredParams}} = {}{{/hasRequiredParams}}, {{/allParams.0}}options?: RawAxiosRequestConfig) {
         return {{classname}}Fp(this.configuration).{{nickname}}(
-            {{#queryParams}}requestParameters.queryParams?.{{paramName}} ?? undefined, {{/queryParams}}
-            {{#pathParams}}requestParameters.pathParams?.{{paramName}} ?? undefined, {{/pathParams}}
-            {{#headerParams}}requestParameters.headerParams?.{{paramName}} ?? undefined, {{/headerParams}}
-            {{#bodyParam}}requestParameters.body ?? undefined, {{/bodyParam}}
-            {{#formParams}}requestParameters.formParams?.{{paramName}} ?? undefined, {{/formParams}}
+            // Fix the parameter order to match the parameter order in the AxiosParamCreator
+            {{#pathParams}}requestParameters.pathParams.{{paramName}}, {{/pathParams}}
+            {{#headerParams}}requestParameters.headerParams.{{paramName}}, {{/headerParams}}
+            {{#queryParams}}requestParameters.queryParams.{{paramName}}, {{/queryParams}}
+            {{#bodyParam}}requestParameters.body, {{/bodyParam}}
+            {{#formParams}}requestParameters.formParams.{{paramName}}, {{/formParams}}
             options).then((request) => request(this.axios, this.basePath));
     }
     {{/useSingleRequestParameter}}
